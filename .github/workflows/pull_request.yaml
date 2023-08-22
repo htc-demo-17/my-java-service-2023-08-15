@@ -57,7 +57,7 @@ jobs:
               --deploy \
               --token ${{ secrets.HUMANITEC_TOKEN }} \
               --org ${{ secrets.HUMANITEC_ORG_ID }} \
-              --app my-java-service-2023-08-15 \
+              --app ${{ env.APP_NAME }} \
               --env ${{ env.ENVIRONMENT_ID }} \
               | tee score_output.json
       - name: Wait for deployment
