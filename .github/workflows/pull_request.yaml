@@ -41,6 +41,7 @@ jobs:
               "type": "${{ env.ENVIRONMENT_TYPE }}"
             }
             EOF
+            cat post.out
             cat post.out | jq .from_deploy.status | grep -q succeeded
             if [ $? -ne 0 ]; then
               cat post.out 
