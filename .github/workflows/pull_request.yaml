@@ -6,6 +6,8 @@ permissions:
   contents: read
   pull-requests: write
 env:
+  AWS_ECR: ${{ secrets.AWS_ECR }}
+  IMAGE: my-java-service-2023-08-15
   BASE_ENVIRONMENT: 'development'
   ENVIRONMENT_TYPE: 'development'
   SCORE_HUMANITEC_VERSION: 0.5.0
@@ -50,6 +52,22 @@ jobs:
           tar -xvf score-humanitec_${{ env.SCORE_HUMANITEC_VERSION }}_linux_amd64.tar.gz
           chmod +x score-humanitec
           mv score-humanitec /usr/local/bin
+      - name: Create humanitec.score.yaml
+        run: |
+          cat <<EOF > humanitec.score.yaml
+          apiVersion: humanitec.org/v1b1
+          spec:
+            ingress:
+              rules:
+                "\${resources.dns}": # This is the DNS record that we defined in the resources section
+                  http:
+                    "/":
+                      type: prefix
+                      port: 80
+          containers:
+            frontend:
+              image: $AWS_ECR/$IMAGE:latest
+          EOF
       - name: Run Score
         run: |
           score-humanitec delta \
